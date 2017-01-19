@@ -97,7 +97,7 @@ class BaseS3Uploader(object):
             # bucket_acl = s3.BucketAcl(self.bucket.name)
             # bucket_acl.Acl().put(ACL='public-read')
             #self.bucket.upload_file(upload_file, filepath)
-            obj = s3.Object(self.bucket.name, filepath).put(Body=upload_file.read())
+            s3.Object(self.bucket.name, filepath).put(Body=upload_file.read())
             print 'Upload'
             #s3.Object(self.bucket.name, upload_file).put(Body=open(filepath), 'rb')
         except Exception as e:
