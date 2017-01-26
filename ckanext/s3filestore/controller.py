@@ -78,8 +78,8 @@ class S3Controller(base.BaseController):
 
             # this is partial solution, because the changes in implementation, KEY is now actually the KEY_PATH
             obj = bucket.Object(key_path)
-            contents = obj.get()['Body'].read().decode('utf-8')
-            dataapp = paste.fileapp.DataApp(contents)
+            contents = obj.get()['Body'].read()
+            dataapp = paste.fileapp.DataApp(str(contents))
 
             try:
                 status, headers, app_iter = request.call_application(dataapp)
