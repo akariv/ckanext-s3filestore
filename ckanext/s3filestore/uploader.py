@@ -31,6 +31,7 @@ class BaseS3Uploader(object):
         self.s_key = config.get('ckanext.s3filestore.aws_secret_access_key')
         self.region = config.get('ckanext.s3filestore.region_name')
         self.signature = config.get('ckanext.s3filestore.sigranure_version')
+        self.host_name = config.get('ckanext.s3filestore.host_name')
         self.bucket = self.get_s3_bucket(self.bucket_name)
 
     def get_directory(self, id, storage_path):
@@ -40,7 +41,6 @@ class BaseS3Uploader(object):
     def get_s3_bucket(self, bucket_name):
         '''Return a boto bucket, creating it if it doesn't exist.'''
         if self.region == 'eu-central-1':
-            print 'use boto 3'
             import boto3
             import botocore
 
@@ -48,7 +48,7 @@ class BaseS3Uploader(object):
             session = boto3.session.Session(aws_access_key_id=self.p_key,
                                             aws_secret_access_key=self.s_key,
                                             region_name=self.region)
-            s3 = session.resource('s3',
+            s3 = session.resource('s3',endpoint_url=self.host_name,
                                   config=botocore.client.Config(signature_version=self.signature))
             try:
                 bucket = s3.Bucket(bucket_name)
@@ -58,7 +58,7 @@ class BaseS3Uploader(object):
                     log.warning('Bucket {0} could not be found, ' +
                                 'attempting to create it...'.format(bucket_name))
                     try:
-                        bucket = S3_conn.create_bucket(bucket_name, CreateBucketConfiguration={
+                        bucket = s3.create_bucket(BSucket=bucket_name, CreateBucketConfiguration={
                             'LocationConstraint': region})
                     except botocore.exception.ClientError as e:
                         log.warning('Could not create bucket {0}: {1}'.format(
@@ -104,7 +104,6 @@ class BaseS3Uploader(object):
             headers.update({'Content-Type': content_type})
 
         if self.region == 'eu-central-1':
-            print 'use boto3'
             import boto3
             import botocore
             session = boto3.session.Session(aws_access_key_id=self.p_key,
@@ -134,7 +133,6 @@ class BaseS3Uploader(object):
     def clear_key(self, filepath):
         '''Deletes the contents of the key at `filepath` on `self.bucket`.'''
         if self.region == 'eu-central-1':
-            print 'use boto3'
             import boto3
             import botocore
             s3 = boto3.resource(
