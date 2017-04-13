@@ -49,8 +49,7 @@ class BaseS3Uploader(object):
             session = boto3.session.Session(aws_access_key_id=self.p_key,
                                             aws_secret_access_key=self.s_key,
                                             region_name=self.region)
-            s3 = session.resource('s3', endpoint_url=self.host_name, 
-                                  config=botocore.client.Config(signature_version=self.signature))
+            s3 = session.resource('s3', config=botocore.client.Config(signature_version='s3v4'))
             try:
                 bucket = s3.Bucket(bucket_name)
             except botocore.exception.ClientError as e:
@@ -111,13 +110,12 @@ class BaseS3Uploader(object):
             session = boto3.session.Session(aws_access_key_id=self.p_key,
                                             aws_secret_access_key=self.s_key,
                                             region_name=self.region)
-            s3 = session.resource('s3', endpoint_url=self.host_name,
-                                  config=botocore.client.Config(signature_version=self.signature))
+            s3 = session.resource('s3', config=botocore.client.Config(signature_version='s3v4'))
             try:
                 s3.Object(self.bucket_name, filepath).put(
                     Body=upload_file.read())
                 log.info("Succesfully uploaded {0} to S3!".format(
-                    upload_file.filename))
+                    filepath))
             except Exception as e:
                 raise e
         else:
