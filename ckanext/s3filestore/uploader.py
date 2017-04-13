@@ -40,7 +40,7 @@ class BaseS3Uploader(object):
 
     def get_s3_bucket(self, bucket_name):
         '''Return a boto bucket, creating it if it doesn't exist.'''
-        if self.region == 'us-east-1':
+        if self.region == 'eu-central-1':
             print 'use boto 3'
             import boto3
             import botocore
@@ -104,7 +104,7 @@ class BaseS3Uploader(object):
         if content_type:
             headers.update({'Content-Type': content_type})
 
-        if self.region == 'us-east-1':
+        if self.region == 'eu-central-1':
             print 'use boto3'
             import boto3
             import botocore
