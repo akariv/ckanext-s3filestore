@@ -104,7 +104,6 @@ class BaseS3Uploader(object):
             headers.update({'Content-Type': content_type})
 
         if self.region == 'eu-central-1':
-            print 'use boto3'
             import boto3
             import botocore
             session = boto3.session.Session(aws_access_key_id=self.p_key,
@@ -133,14 +132,13 @@ class BaseS3Uploader(object):
     def clear_key(self, filepath):
         '''Deletes the contents of the key at `filepath` on `self.bucket`.'''
         if self.region == 'eu-central-1':
-            print 'use boto3'
             import boto3
             import botocore
-            s3 = boto3.resource(
-                's3', config=botocore.client.Config(signature_version=self.signature))
+            
             session = boto3.session.Session(aws_access_key_id=self.p_key,
                                             aws_secret_access_key=self.s_key,
                                             region_name=self.region)
+            s3 = session.resource('s3', config=botocore.client.Config(signature_version=self.signature))
             try:
                 s3.Object(self.bucket_name, filepath).delete()
             except Exception as e:
