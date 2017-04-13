@@ -113,7 +113,7 @@ class BaseS3Uploader(object):
             s3 = session.resource('s3', config=botocore.client.Config(signature_version=self.signature))
             try:
                 s3.Object(self.bucket_name, filepath).put(
-                    Body=upload_file.read())
+                    Body=upload_file.read(), ACL='public-read')
                 log.info("Succesfully uploaded {0} to S3!".format(
                     filepath))
             except Exception as e:
@@ -137,13 +137,12 @@ class BaseS3Uploader(object):
             import boto3
             import botocore
             s3 = boto3.resource(
-                's3', endpoint_url=self.host_name, config=botocore.client.Config(signature_version=self.signature))
+                's3', config=botocore.client.Config(signature_version=self.signature))
             session = boto3.session.Session(aws_access_key_id=self.p_key,
                                             aws_secret_access_key=self.s_key,
                                             region_name=self.region)
             try:
-                obj = s3.Object(self.bucket_name, filepath)
-                s3.Object(self.bucket, obj.key).delete()
+                s3.Object(self.bucket_name, filepath).delete()
             except Exception as e:
                 raise e
         else:
