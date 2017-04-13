@@ -49,7 +49,7 @@ class BaseS3Uploader(object):
             session = boto3.session.Session(aws_access_key_id=self.p_key,
                                             aws_secret_access_key=self.s_key,
                                             region_name=self.region)
-            s3 = session.resource('s3', config=botocore.client.Config(signature_version='s3v4'))
+            s3 = session.resource('s3', config=botocore.client.Config(signature_version=self.signature))
             try:
                 bucket = s3.Bucket(bucket_name)
             except botocore.exception.ClientError as e:
@@ -110,7 +110,7 @@ class BaseS3Uploader(object):
             session = boto3.session.Session(aws_access_key_id=self.p_key,
                                             aws_secret_access_key=self.s_key,
                                             region_name=self.region)
-            s3 = session.resource('s3', config=botocore.client.Config(signature_version='s3v4'))
+            s3 = session.resource('s3', config=botocore.client.Config(signature_version=self.signature))
             try:
                 s3.Object(self.bucket_name, filepath).put(
                     Body=upload_file.read())
@@ -137,10 +137,10 @@ class BaseS3Uploader(object):
             import boto3
             import botocore
             s3 = boto3.resource(
-                's3', endpoint_url=self.host_name, config=botocore.client.Config(signature_version='s3v4'))
-            session = boto3.session.Session(aws_access_key_id=p_key,
-                                            aws_secret_access_key=s_key,
-                                            region_name=region)
+                's3', endpoint_url=self.host_name, config=botocore.client.Config(signature_version=self.signature))
+            session = boto3.session.Session(aws_access_key_id=self.p_key,
+                                            aws_secret_access_key=self.s_key,
+                                            region_name=self.region)
             try:
                 obj = s3.Object(self.bucket_name, filepath)
                 s3.Object(self.bucket, obj.key).delete()
